@@ -31,6 +31,24 @@ cd opencode-env
 | `config/skills/` | 技能 |
 | `config/agents/` | 自定义 agent（可空） |
 | `config/commands/` | 自定义命令（可空） |
+| `history/` | 聊天记录导出（Markdown，每次 `save.ps1` 自动更新） |
+
+## 聊天记录
+
+`export-sessions.ps1` 会把会话导出成 Markdown 放在 `history/`：
+
+- 只保留「你问的」和「AI 答的」文字，丢掉工具输出和思考过程
+- 一个会话一个文件，按日期命名
+- 已经导出过的会跳过，只导新的
+
+```powershell
+.\export-sessions.ps1          # 增量导出
+.\export-sessions.ps1 -Force   # 全部重导
+```
+
+`save.ps1` 每次会自动调用它，不想导就加 `-NoHistory`。
+
+**注意：这是文字记录，不是可恢复的会话。**新电脑上能读、能搜、能让 AI 参考，但不能 `/resume` 继续聊。要真正接续会话需要同步 `opencode.db`，那个文件里混着登录凭据，所以本仓库不放。
 
 ## 这里**不**存什么
 

@@ -2,15 +2,17 @@
   把本机 ~/.config/opencode 的改动回存到仓库，并推送到 GitHub。
 
   用法：
-    .\save.ps1                    # 自动提交信息
+    .\save.ps1                        # 自动提交信息
     .\save.ps1 -Message "加了新技能"
+    .\save.ps1 -NoHistory             # 不导出聊天记录
 
-  只同步这 6 项：AGENTS.md / opencode.json / cli.json / skills / agents / commands
-  不会碰：service.json、聊天记录、登录凭据、缓存
+  同步内容：AGENTS.md / opencode.json / cli.json / skills / agents / commands / history
+  不同步：service.json、opencode.db、登录凭据、缓存
 #>
 [CmdletBinding()]
 param(
-    [string]$Message
+    [string]$Message,
+    [switch]$NoHistory
 )
 
 $ErrorActionPreference = 'Stop'
@@ -20,10 +22,23 @@ $src  = Join-Path $repo 'config'
 
 function Write-Step($text) { Write-Host "==> $text" -ForegroundColor Cyan }
 function Write-Warn($text) { Write-Host "!!  $text" -ForegroundColor Yellow }
+function Write-Fail($text) { Write-Host "xx  $text" -ForegroundColor Red }
 
-if (-not (Test-Path $dest)) { Write-Warn "找不到 $dest"; exit 1 }
+# git 往 stderr 打 warning 时，PowerShell 会把它当成异常；统一在这里收口
+function Invoke-Git {
+    param([string[]]$Arguments)
+    $out = & git @Arguments 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host $out -ForegroundColor Red
+        Write-Fail ("git " + ($Arguments -join ' ') + " 失败（exit $LASTEXITCODE）")
+        exit 1
+    }
+    return $out
+}
 
-# ---------------------------------------------------------------- 1. 回存
+if (-not (Test-Path $dest)) { Write-Fail "找不到 $dest"; exit 1 }
+
+# ---------------------------------------------------------------- 1. 回存配置
 Write-Step '从本机配置同步到仓库'
 foreach ($f in @('AGENTS.md', 'opencode.json', 'cli.json')) {
     $p = Join-Path $dest $f
@@ -37,25 +52,33 @@ foreach ($d in @('skills', 'agents', 'commands')) {
         Copy-Item (Join-Path $p '*') $target -Recurse -Force
     }
 }
-Get-ChildItem $src -Recurse -Filter '.gitkeep' -Force -ErrorAction SilentlyContinue | Out-Null
 
-# ---------------------------------------------------------------- 2. 防泄漏检查
+# ---------------------------------------------------------------- 2. 聊天记录
+if (-not $NoHistory) {
+    $exporter = Join-Path $repo 'export-sessions.ps1'
+    if (Test-Path $exporter) {
+        Write-Step '导出聊天记录到 history/'
+        & $exporter
+    }
+}
+
+# ---------------------------------------------------------------- 3. 防泄漏检查
 Write-Step '检查敏感文件'
-$bad = git -C $repo status --porcelain | Select-String -Pattern 'service\.json|auth\.json|\.db$|\.env|\.pem$|\.key$'
+$changes = Invoke-Git @('-C', $repo, 'status', '--porcelain')
+$bad = $changes -split "`n" | Where-Object { $_ -match 'service\.json|auth\.json|\.db$|\.env|\.pem$|\.key$' }
 if ($bad) {
-    Write-Host $bad.ToString() -ForegroundColor Red
-    Write-Warn '检测到疑似敏感文件，已中止。请检查 .gitignore 后再试。'
+    $bad | ForEach-Object { Write-Host $_ -ForegroundColor Red }
+    Write-Fail '检测到疑似敏感文件，已中止。请检查 .gitignore 后再试。'
     exit 1
 }
 
-# ---------------------------------------------------------------- 3. 提交
-$changes = git -C $repo status --porcelain
-if (-not $changes) {
+if ([string]::IsNullOrWhiteSpace($changes)) {
     Write-Host '没有改动，无需提交。' -ForegroundColor Green
     exit 0
 }
 
-if (-not (git -C $repo config user.email)) {
+# ---------------------------------------------------------------- 4. 提交
+if (-not (Invoke-Git @('-C', $repo, 'config', 'user.email'))) {
     Write-Warn '还没设置 git 身份。先运行：'
     Write-Host '  git config --global user.name  "你的名字"'
     Write-Host '  git config --global user.email "你的邮箱"'
@@ -64,11 +87,11 @@ if (-not (git -C $repo config user.email)) {
 
 if (-not $Message) { $Message = 'sync: ' + (Get-Date -Format 'yyyy-MM-dd HH:mm') }
 
-git -C $repo add -A
-git -C $repo commit -m $Message
+Invoke-Git @('-C', $repo, 'add', '-A') | Out-Null
+Invoke-Git @('-C', $repo, 'commit', '-m', $Message) | Out-Null
 
 # 本机 git 可能配了失效的本地代理（如 127.0.0.1:7890），显式绕过再推
-git -C $repo -c http.proxy= -c https.proxy= push
+Invoke-Git @('-C', $repo, '-c', 'http.proxy=', '-c', 'https.proxy=', 'push') | Out-Null
 
 Write-Host ''
 Write-Host '已推送。换电脑时 clone 后跑 bootstrap.ps1 即可。' -ForegroundColor Green
