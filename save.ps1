@@ -66,7 +66,9 @@ if (-not $Message) { $Message = 'sync: ' + (Get-Date -Format 'yyyy-MM-dd HH:mm')
 
 git -C $repo add -A
 git -C $repo commit -m $Message
-git -C $repo push
+
+# 本机 git 可能配了失效的本地代理（如 127.0.0.1:7890），显式绕过再推
+git -C $repo -c http.proxy= -c https.proxy= push
 
 Write-Host ''
 Write-Host '已推送。换电脑时 clone 后跑 bootstrap.ps1 即可。' -ForegroundColor Green

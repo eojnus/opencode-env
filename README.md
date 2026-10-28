@@ -46,3 +46,13 @@ cd opencode-env
 - 本仓库必须设为 **Private**
 - 不要在任何 commit 里放 `service.json` 或 token（`.gitignore` 已挡，但提交前仍要 `git status` 看一眼）
 - 用完公共电脑记得清 git 凭据：`git credential-manager erase`，或在 Windows 凭据管理器里删掉对应条目
+
+## 常见问题
+
+**push 报 `Failed to connect to github.com:443 over proxy 127.0.0.1`**
+
+本机 git 配了本地代理（Clash 之类）但代理没开。`save.ps1` 已经绕过代理推送，手动操作时用：
+
+```powershell
+git -c http.proxy= -c https.proxy= push
+```
