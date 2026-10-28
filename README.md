@@ -3,6 +3,8 @@
 OpenCode 的环境备份仓库：**全局配置、技能、插件清单、聊天记录**。
 换电脑时用它恢复，不用重配一遍。
 
+**本仓库是 Public**：clone / 浏览不需要登录 GitHub，只有推送才需要认证。
+
 > 这个 README 是写给**后来的 AI 助手**看的。人类只需要说一句
 > 「照仓库 README 把我的环境装好」或「照 README 把环境传上去」。
 
@@ -133,10 +135,15 @@ opencode --version
 
 ### 3. 恢复配置
 
-**方式 A：跑脚本**
+仓库是公开的，**不需要登录就能 clone**：
 
 ```powershell
 git clone https://github.com/eojnus/opencode-env
+```
+
+**方式 A：跑脚本**
+
+```powershell
 cd opencode-env
 .\bootstrap.ps1
 ```
@@ -192,8 +199,9 @@ main 上有完整历史，用 `git revert <commit>` 生成反向提交，不要 
 
 ## 五、安全
 
-- 本仓库必须保持 **Private**
-- 上传前检查 `git status`，确认没有 `.db`、`service.json`、token
-- 在公共电脑上用完记得 `gh auth logout`，并清理 git 凭据：
+- 本仓库是 **Public**：任何人都能读到 `config/` 和 `history/`（聊天记录）。**上传前必须确认没有敏感内容**，一旦推上去就等于公开，事后改回私有也无法收回搜索引擎缓存。
+- **绝不能**提交：`opencode.db`（含登录凭据）、`service.json`（本机密码）、任何 token / API key、真实邮箱与密码
+- 上传前检查 `git status`，`save.ps1` 也会自动扫描并中止
+- 推送需要认证；在公共电脑上推完记得 `gh auth logout`，并清理 git 凭据：
   `git credential-manager erase`
 - 曾经的 `opencode.db` **从未**进入本仓库；以后也不要加进来
