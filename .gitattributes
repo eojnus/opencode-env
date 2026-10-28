@@ -1,0 +1,9 @@
+# PowerShell 脚本用 CRLF，避免在 Windows 上出现奇怪问题
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+# 其余统一 LF
+*.md  text eol=lf
+*.json text eol=lf
+*.jsonc text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf

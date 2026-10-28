@@ -1,0 +1,22 @@
+# ===== 绝对不能提交 =====
+# 本机服务注册信息，里面带 password
+service.json
+# 登录凭据（任何形式的）
+auth.json
+credentials.json
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.*
+*.pem
+*.key
+# 插件运行时状态（可能含账号信息）
+opencode-quota/
+
+# ===== 系统垃圾 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+*.log
