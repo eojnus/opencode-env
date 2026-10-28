@@ -27,10 +27,18 @@ function Write-Fail($text) { Write-Host "xx  $text" -ForegroundColor Red }
 # git 往 stderr 打 warning 时，PowerShell 会把它当成异常；统一在这里收口
 function Invoke-Git {
     param([string[]]$Arguments)
-    $out = & git @Arguments 2>&1 | Out-String
-    if ($LASTEXITCODE -ne 0) {
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $out = & git @Arguments 2>&1 | Out-String
+        $code = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $prev
+    }
+    if ($code -ne 0) {
         Write-Host $out -ForegroundColor Red
-        Write-Fail ("git " + ($Arguments -join ' ') + " 失败（exit $LASTEXITCODE）")
+        Write-Fail ("git " + ($Arguments -join ' ') + " 失败（exit $code）")
         exit 1
     }
     return $out
@@ -73,7 +81,8 @@ if ($bad) {
 }
 
 if ([string]::IsNullOrWhiteSpace($changes)) {
-    Write-Host '没有改动，无需提交。' -ForegroundColor Green
+    Write-Host '没有新改动，尝试同步远端状态。' -ForegroundColor Green
+    Invoke-Git @('-C', $repo, '-c', 'http.proxy=', '-c', 'https.proxy=', 'push') | Out-Null
     exit 0
 }
 
