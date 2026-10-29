@@ -5,16 +5,27 @@
     "mode": "system"
   },
   "animations": true,
+  "mouse": true,
   "session": {
     "thinking": "hide",
     "markdown": "rendered",
     "grouping": "auto",
-    "image_preview": true
+    "image_preview": true,
+    "scrollbar": true,
+    "permissions": "autoaccept",
+    "verbosity": "low"
   },
   "tabs": {
     "layout": "horizontal"
   },
   "terminal": {
     "copy": "manual"
+  },
+  "diffs": {
+    "view": "auto",
+    "wrap": "word"
+  },
+  "attention": {
+    "sound": false
   }
 }
