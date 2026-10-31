@@ -20,6 +20,14 @@ $ErrorActionPreference = 'Stop'
 $repo   = $PSScriptRoot
 $outDir = Join-Path $repo 'history'
 
+# opencode api 输出是 UTF-8；控制台默认按 GBK 解码会把中文标题截断，导致 ConvertFrom-Json 失败
+try {
+    [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+    $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+} catch {
+    Write-Host '!!  无法切换控制台编码，中文标题可能乱码' -ForegroundColor Yellow
+}
+
 function Write-Step($text) { Write-Host "==> $text" -ForegroundColor Cyan }
 function Write-Warn($text) { Write-Host "!!  $text" -ForegroundColor Yellow }
 

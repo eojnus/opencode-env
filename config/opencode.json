@@ -1,5 +1,7 @@
 {
   "plugins": [
-    "@slkiser/opencode-quota"
-  ]
+    "@slkiser/opencode-quota",
+    "oh-my-opencode-slim"
+  ],
+  "lsp": true
 }
