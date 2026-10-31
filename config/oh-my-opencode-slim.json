@@ -1,0 +1,133 @@
+{
+  "$schema": "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json",
+  "preset": "ds",
+  "presets": {
+    "openai": {
+      "orchestrator": {
+        "model": "openai/gpt-6.1-sol",
+        "variant": "medium",
+        "skills": [
+          "*"
+        ]
+      },
+      "oracle": {
+        "model": "openai/gpt-6.1-sol",
+        "variant": "high",
+        "skills": [
+          "simplify"
+        ]
+      },
+      "explorer": {
+        "model": "openai/gpt-6-luna",
+        "variant": "low",
+        "skills": []
+      },
+      "designer": {
+        "model": "openai/gpt-6-luna",
+        "variant": "medium",
+        "skills": []
+      },
+      "fixer": {
+        "model": "openai/gpt-6.1-sol",
+        "variant": "low",
+        "skills": []
+      }
+    },
+    "opencode-go": {
+      "orchestrator": {
+        "model": "opencode-go/minimax-m3",
+        "variant": "thinking",
+        "skills": [
+          "*"
+        ]
+      },
+      "oracle": {
+        "model": "opencode-go/qwen3.7-max",
+        "variant": "max",
+        "skills": [
+          "simplify"
+        ]
+      },
+      "explorer": {
+        "model": "opencode-go/deepseek-v4-flash",
+        "variant": "high",
+        "skills": []
+      },
+      "designer": {
+        "model": "opencode-go/kimi-k2.7-code",
+        "skills": []
+      },
+      "fixer": {
+        "model": "opencode-go/deepseek-v4-flash",
+        "variant": "high",
+        "skills": []
+      },
+      "observer": {
+        "model": "opencode-go/mimo-v2.5",
+        "skills": []
+      }
+    },
+    "deepseek": {
+      "orchestrator": {
+        "model": "deepseek/deepseek-v4-pro",
+        "skills": [
+          "*"
+        ]
+      },
+      "oracle": {
+        "model": "deepseek/deepseek-v4-pro",
+        "skills": [
+          "simplify"
+        ]
+      },
+      "explorer": {
+        "model": "deepseek/deepseek-flash",
+        "skills": []
+      },
+      "designer": {
+        "model": "opencode/glm-5.3-flash-free",
+        "skills": []
+      },
+      "fixer": {
+        "model": "deepseek/deepseek-v4-pro",
+        "skills": []
+      }
+    },
+    "ds": {
+      "orchestrator": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "oracle": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "fixer": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "observer": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "explorer": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "designer": {
+        "model": "deepseek/deepseek-flash",
+        "variant": "high"
+      },
+      "council": {
+        "model": "opencode/deepseek-v4.1-flash-free",
+        "variant": "high",
+        "temperature": 1
+      },
+      "councillor": {
+        "model": "opencode/deepseek-v4.1-flash-free",
+        "variant": "high",
+        "temperature": 1
+      }
+    }
+  }
+}

@@ -18,6 +18,8 @@ opencode-env/
 │  ├─ AGENTS.md                全局规则
 │  ├─ opencode.json            插件、默认模型
 │  ├─ cli.json                 主题、快捷键、TUI 插件
+│  ├─ tui.json                 TUI 插件（oh-my-opencode-slim）
+│  ├─ oh-my-opencode-slim.json 编排器/子 agent 的预设与模型
 │  ├─ skills/                  技能（8 个）
 │  ├─ agents/                  自定义 agent（可能为空）
 │  └─ commands/                自定义命令（可能为空）
@@ -93,9 +95,13 @@ git -C $repo @net push origin main
 | `AGENTS.md` | `config/AGENTS.md` |
 | `opencode.json` | `config/opencode.json` |
 | `cli.json` | `config/cli.json` |
+| `tui.json` | `config/tui.json` |
+| `oh-my-opencode-slim.json` | `config/oh-my-opencode-slim.json` |
 | `skills/` | `config/skills/`（整个目录） |
 | `agents/` | `config/agents/` |
 | `commands/` | `config/commands/` |
+
+不拷贝：`*.json.bak` 自动备份、`.opencode.json.write-lock/` 之类的运行时锁目录。
 
 另外由 `export-sessions.ps1` 生成 `history/`。
 

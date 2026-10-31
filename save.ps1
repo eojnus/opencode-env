@@ -13,7 +13,7 @@
     → checkout main → merge --no-ff → 推送 main
     → 分支保留，不删除
 
-  同步内容：AGENTS.md / opencode.json / cli.json / skills / agents / commands / history
+  同步内容：AGENTS.md / opencode.json / cli.json / tui.json / oh-my-opencode-slim.json / skills / agents / commands / history
   不同步：service.json、opencode.db、登录凭据、缓存
 #>
 [CmdletBinding()]
@@ -67,7 +67,7 @@ Invoke-Git ($gitNet + @('pull', '--ff-only', 'origin', 'main')) | Out-Null
 
 # ---------------------------------------------------------------- 2. 回存配置
 Write-Step '从本机配置同步到仓库'
-foreach ($f in @('AGENTS.md', 'opencode.json', 'cli.json')) {
+foreach ($f in @('AGENTS.md', 'opencode.json', 'cli.json', 'tui.json', 'oh-my-opencode-slim.json')) {
     $p = Join-Path $dest $f
     if (Test-Path $p) { Copy-Item $p (Join-Path $src $f) -Force }
 }
