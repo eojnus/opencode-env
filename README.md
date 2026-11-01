@@ -187,6 +187,12 @@ Copy-Item .\config\* $dest -Recurse -Force
 本机 git 配了本地代理（Clash 之类）但代理没开。所有网络操作加 `-c http.proxy= -c https.proxy=`，
 或者直接用 `save.ps1`（它已内置绕过）。
 
+**反过来：必须挂代理才能连 GitHub 的机器**
+
+`save.ps1` 会优先读环境变量 `HTTPS_PROXY` / `HTTP_PROXY`，没设时才清空代理。
+所以这种机器上先 `$env:HTTPS_PROXY='http://127.0.0.1:7890'` 再跑 `save.ps1` 即可；
+不设环境变量、git 里也没代理时，脚本行为跟以前一样（直连）。
+
 **PowerShell 报「缺少右 }」**
 
 `.ps1` 里有中文时必须是 **UTF-8 with BOM** 编码，否则 PowerShell 5.1 按 GBK 读会语法错。改完脚本记得保持 BOM。
