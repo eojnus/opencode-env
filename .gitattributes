@@ -7,3 +7,10 @@
 *.jsonc text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
+
+# demo 里的 html/js/css 统一 LF，保证 clone 出来跟本机字节一致
+*.html text eol=lf
+*.js   text eol=lf
+*.css  text eol=lf
+*.svg  text eol=lf
+*.txt  text eol=lf
