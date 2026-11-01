@@ -27,8 +27,11 @@ $repo = $PSScriptRoot
 $dest = Join-Path $env:USERPROFILE '.config\opencode'
 $src  = Join-Path $repo 'config'
 
-# 本机 git 可能配了失效的本地代理（如 127.0.0.1:7890），网络操作统一绕过
-$net = @('-c', 'http.proxy=', '-c', 'https.proxy=')
+# 网络代理策略：
+#   - 环境变量里配了 HTTPS_PROXY / HTTP_PROXY 时，走该代理（有些机器必须走代理才能连 GitHub）
+#   - 否则显式清空代理，绕开 git 全局配置里可能失效的本地代理（如 Clash 关了但配置还在）
+$proxy = if ($env:HTTPS_PROXY) { $env:HTTPS_PROXY } elseif ($env:HTTP_PROXY) { $env:HTTP_PROXY } else { '' }
+$net = @('-c', "http.proxy=$proxy", '-c', "https.proxy=$proxy")
 
 function Write-Step($text) { Write-Host "==> $text" -ForegroundColor Cyan }
 function Write-Warn($text) { Write-Host "!!  $text" -ForegroundColor Yellow }
